@@ -3,17 +3,15 @@ import {
   Box, 
   Container, 
   Typography, 
-  Paper, 
   Button,
   IconButton,
-  Chip,
   useTheme,
   useMediaQuery,
   Divider,
   Card,
   CardContent,
-  ToggleButton,
-  ToggleButtonGroup
+  Snackbar,
+  Alert
 } from '@mui/material';
 import { 
   ChevronLeft as ChevronLeftIcon,
@@ -21,6 +19,7 @@ import {
   WbSunny as SunIcon,
   Nightlight as NightIcon,
   Add as AddIcon,
+  Check as CheckIcon,
   ArrowBack as ArrowBackIcon,
   Info as InfoIcon
 } from '@mui/icons-material';
@@ -36,8 +35,8 @@ const BookingPage = () => {
   
   // State for date selection
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-  const [selectedSlot, setSelectedSlot] = useState<string | null>(null);
-  const [formatType, setFormatType] = useState<string>("5v5");
+  const [selectedSlots, setSelectedSlots] = useState<string[]>([]);
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   
   // Generate dates for the calendar view (7 days)
   const today = new Date();
@@ -80,34 +79,46 @@ const BookingPage = () => {
     { date: format(dateArray[1], 'yyyy-MM-dd'), time: "2:00 - 3:00" },
     { date: format(dateArray[2], 'yyyy-MM-dd'), time: "6:00 - 7:00" },
   ];
+
+  // Calculate available slots
+  const getTotalSlots = () => {
+    return midnightSlots.length + morningSlots.length + afternoonSlots.length + eveningSlots.length;
+  };
+
+  const getAvailableSlots = () => {
+    const dateStr = format(selectedDate, 'yyyy-MM-dd');
+    const bookedForDate = bookedSlots.filter(slot => slot.date === dateStr).length;
+    return getTotalSlots() - bookedForDate;
+  };
   
   // Check if a slot is booked
   const isSlotBooked = (date: string, time: string) => {
     return bookedSlots.some(slot => slot.date === date && slot.time === time);
   };
   
-  // Handle slot selection
+  // Handle slot selection (multiple selection)
   const handleSlotSelect = (date: string, time: string) => {
     if (!isSlotBooked(date, time)) {
-      setSelectedSlot(`${date}-${time}`);
+      const slotId = `${date}-${time}`;
+      setSelectedSlots(prev => {
+        if (prev.includes(slotId)) {
+          return prev.filter(id => id !== slotId);
+        } else {
+          return [...prev, slotId];
+        }
+      });
     }
   };
   
   // Handle booking confirmation
   const handleBookNow = () => {
-    if (selectedSlot) {
-      // Navigate to checkout or confirmation page
-      navigate('/checkout');
-    }
-  };
-
-  // Handle format type change
-  const handleFormatChange = (
-    event: React.MouseEvent<HTMLElement>,
-    newFormat: string,
-  ) => {
-    if (newFormat !== null) {
-      setFormatType(newFormat);
+    if (selectedSlots.length > 0) {
+      setShowSuccessMessage(true);
+      // Reset selected slots after successful booking
+      setTimeout(() => {
+        setSelectedSlots([]);
+        navigate('/');
+      }, 2000);
     }
   };
   
@@ -116,11 +127,33 @@ const BookingPage = () => {
     navigate('/');
   };
 
+  // Handle close success message
+  const handleCloseSuccessMessage = () => {
+    setShowSuccessMessage(false);
+  };
+
+  // Calculate total price
+  const calculateTotalPrice = () => {
+    let total = 0;
+    selectedSlots.forEach(slotId => {
+      const time = slotId.split('-')[2] + ' - ' + slotId.split('-')[3];
+      
+      // Find the price for this time slot
+      const allSlots = [...midnightSlots, ...morningSlots, ...afternoonSlots, ...eveningSlots];
+      const slot = allSlots.find(s => s.time === time);
+      if (slot) {
+        total += slot.price;
+      }
+    });
+    return total;
+  };
+
   // Render time slot card
   const renderTimeSlot = (slot: { time: string, price: number }, category: string) => {
     const dateStr = format(selectedDate, 'yyyy-MM-dd');
     const isBooked = isSlotBooked(dateStr, slot.time);
-    const isSelected = selectedSlot === `${dateStr}-${slot.time}`;
+    const slotId = `${dateStr}-${slot.time}`;
+    const isSelected = selectedSlots.includes(slotId);
     
     return (
       <Card 
@@ -141,16 +174,16 @@ const BookingPage = () => {
           display: 'flex', 
           justifyContent: 'space-between', 
           alignItems: 'center',
-          p: 2,
-          '&:last-child': { pb: 2 }
+          p: { xs: 1.5, sm: 2 },
+          '&:last-child': { pb: { xs: 1.5, sm: 2 } }
         }}>
           <Box>
-            <Typography variant="h6" fontWeight={500}>
+            <Typography variant="h6" fontWeight={500} sx={{ fontSize: { xs: '1rem', sm: '1.25rem' } }}>
               {slot.time}
             </Typography>
           </Box>
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <Typography variant="h6" fontWeight={600} sx={{ mr: 2 }}>
+            <Typography variant="h6" fontWeight={600} sx={{ mr: 2, fontSize: { xs: '1rem', sm: '1.25rem' } }}>
               ₹{slot.price}
             </Typography>
             <IconButton 
@@ -163,11 +196,11 @@ const BookingPage = () => {
                 '&:hover': {
                   bgcolor: isSelected ? 'primary.dark' : 'grey.200',
                 },
-                width: 40,
-                height: 40
+                width: { xs: 36, sm: 40 },
+                height: { xs: 36, sm: 40 }
               }}
             >
-              <AddIcon />
+              {isSelected ? <CheckIcon /> : <AddIcon />}
             </IconButton>
           </Box>
         </CardContent>
@@ -193,26 +226,8 @@ const BookingPage = () => {
             </IconButton>
             <Box>
               <Typography variant="h6" component="h1" fontWeight={600}>
-                {sportType === 'cricket' ? 'Falah Turf' : 'Pickleball Court'}
+                {sportType === 'cricket' ? 'Cricket Field' : 'Pickleball Court'}
               </Typography>
-              <Box sx={{ display: 'flex', alignItems: 'center', mt: 0.5 }}>
-                <Box 
-                  component="span" 
-                  sx={{ 
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    bgcolor: 'warning.light',
-                    color: 'warning.dark',
-                    borderRadius: 1,
-                    px: 1,
-                    py: 0.5,
-                    mr: 1
-                  }}
-                >
-                  <Typography variant="body2" fontWeight={600}>3.17</Typography>
-                </Box>
-                <Typography variant="body2" color="text.secondary">(23)</Typography>
-              </Box>
             </Box>
           </Box>
         </Container>
@@ -260,10 +275,12 @@ const BookingPage = () => {
             <IconButton 
               sx={{ 
                 position: 'absolute',
-                left: -16,
+                left: { xs: -8, sm: -16 },
                 zIndex: 2,
                 bgcolor: 'background.paper',
-                boxShadow: 1
+                boxShadow: 1,
+                width: { xs: 32, sm: 40 },
+                height: { xs: 32, sm: 40 }
               }}
             >
               <ChevronLeftIcon />
@@ -294,8 +311,8 @@ const BookingPage = () => {
                     key={index}
                     onClick={() => setSelectedDate(date)}
                     sx={{
-                      minWidth: 70,
-                      height: 70,
+                      minWidth: { xs: 60, sm: 70 },
+                      height: { xs: 60, sm: 70 },
                       display: 'flex',
                       flexDirection: 'column',
                       alignItems: 'center',
@@ -335,10 +352,12 @@ const BookingPage = () => {
             <IconButton 
               sx={{ 
                 position: 'absolute',
-                right: -16,
+                right: { xs: -8, sm: -16 },
                 zIndex: 2,
                 bgcolor: 'background.paper',
-                boxShadow: 1
+                boxShadow: 1,
+                width: { xs: 32, sm: 40 },
+                height: { xs: 32, sm: 40 }
               }}
             >
               <ChevronRightIcon />
@@ -346,60 +365,31 @@ const BookingPage = () => {
           </Box>
         </Box>
 
-        {/* Turf Type */}
-        <Box sx={{ mb: 3 }}>
-          <Box sx={{ 
-            display: 'flex', 
-            alignItems: 'center', 
-            mb: 1
-          }}>
-            <Box 
-              component="span" 
-              sx={{ 
-                display: 'inline-flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                width: 40,
-                height: 40,
-                borderRadius: '50%',
-                bgcolor: 'success.light',
-                color: 'success.dark',
-                mr: 1
-              }}
-            >
-              <Box component="span" role="img" aria-label="turf">
-                🌱
-              </Box>
-            </Box>
-            <Typography variant="h6" fontWeight={600}>
-              ASTRO TURF
-            </Typography>
-          </Box>
-
-          <Divider sx={{ my: 2 }} />
-        </Box>
-
-        {/* Format Selection */}
+        {/* Available Slots Header */}
         <Box sx={{ mb: 3 }}>
           <Box sx={{ 
             display: 'flex', 
             justifyContent: 'space-between', 
             alignItems: 'center',
-            mb: 2
+            mb: 2,
+            pb: 2,
+            borderBottom: '1px solid',
+            borderColor: 'divider'
           }}>
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
               <Typography variant="h6" fontWeight={600}>
                 Available Slots
               </Typography>
-              <Chip 
-                label="(22)" 
-                size="small" 
+              <Typography 
+                variant="h6" 
+                fontWeight={600} 
                 sx={{ 
-                  ml: 1,
-                  bgcolor: 'grey.100',
-                  fontWeight: 500
-                }} 
-              />
+                  ml: 2,
+                  color: 'primary.main'
+                }}
+              >
+                {getAvailableSlots()}
+              </Typography>
             </Box>
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
               <InfoIcon fontSize="small" sx={{ color: 'warning.main', mr: 0.5 }} />
@@ -408,56 +398,6 @@ const BookingPage = () => {
               </Typography>
             </Box>
           </Box>
-
-          <ToggleButtonGroup
-            value={formatType}
-            exclusive
-            onChange={handleFormatChange}
-            aria-label="format type"
-            fullWidth
-            sx={{ mb: 3 }}
-          >
-            <ToggleButton 
-              value="5v5" 
-              aria-label="5v5"
-              sx={{ 
-                borderRadius: '50px',
-                py: 1,
-                fontWeight: 600,
-                color: formatType === '5v5' ? 'success.main' : 'text.primary',
-                borderColor: formatType === '5v5' ? 'success.main' : 'divider',
-                '&.Mui-selected': {
-                  bgcolor: formatType === '5v5' ? 'success.light' : 'transparent',
-                  color: formatType === '5v5' ? 'success.main' : 'text.primary',
-                  '&:hover': {
-                    bgcolor: 'success.light',
-                  }
-                }
-              }}
-            >
-              5v5
-            </ToggleButton>
-            <ToggleButton 
-              value="6v6" 
-              aria-label="6v6"
-              sx={{ 
-                borderRadius: '50px',
-                py: 1,
-                fontWeight: 600,
-                color: formatType === '6v6' ? 'primary.main' : 'text.primary',
-                borderColor: formatType === '6v6' ? 'primary.main' : 'divider',
-                '&.Mui-selected': {
-                  bgcolor: formatType === '6v6' ? 'primary.light' : 'transparent',
-                  color: formatType === '6v6' ? 'primary.main' : 'text.primary',
-                  '&:hover': {
-                    bgcolor: 'primary.light',
-                  }
-                }
-              }}
-            >
-              6v6
-            </ToggleButton>
-          </ToggleButtonGroup>
         </Box>
 
         {/* Time Slots */}
@@ -528,7 +468,7 @@ const BookingPage = () => {
         </Box>
 
         {/* Fixed Book Now Button */}
-        {selectedSlot && (
+        {selectedSlots.length > 0 && (
           <Box 
             component={motion.div}
             initial={{ opacity: 0, y: 20 }}
@@ -546,6 +486,14 @@ const BookingPage = () => {
             }}
           >
             <Container maxWidth="md">
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
+                <Typography variant="body1" fontWeight={500}>
+                  {selectedSlots.length} slot{selectedSlots.length > 1 ? 's' : ''} selected
+                </Typography>
+                <Typography variant="h6" fontWeight={600}>
+                  Total: ₹{calculateTotalPrice()}
+                </Typography>
+              </Box>
               <Button
                 variant="contained"
                 fullWidth
@@ -566,6 +514,23 @@ const BookingPage = () => {
           </Box>
         )}
       </Container>
+
+      {/* Success Message */}
+      <Snackbar
+        open={showSuccessMessage}
+        autoHideDuration={2000}
+        onClose={handleCloseSuccessMessage}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <Alert 
+          onClose={handleCloseSuccessMessage} 
+          severity="success" 
+          variant="filled"
+          sx={{ width: '100%' }}
+        >
+          Booking successful! Redirecting to home...
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };

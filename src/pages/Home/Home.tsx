@@ -58,10 +58,11 @@ const Home = () => {
       <Box 
         sx={{ 
           position: 'relative',
-          minHeight: { xs: '80vh', md: '100vh' },
+          minHeight: { xs: '70vh', md: '90vh' },
           width: '100%',
           display: 'flex',
           alignItems: 'center',
+          justifyContent: 'center',
           overflow: 'hidden',
           backgroundColor: 'background.paper',
           '&::before': {
@@ -89,72 +90,68 @@ const Home = () => {
           }
         }}
       >
-        <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 2 }}>
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <Box sx={{ width: { xs: '100%', md: '66.666667%', lg: '58.333333%' }, p: { xs: 1, md: 2 } }}>
-              <motion.div
-                initial="hidden"
-                animate="visible"
-                variants={slideIn}
+        <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 2, py: { xs: 4, md: 6 } }}>
+          <motion.div
+            initial="hidden"
+            animate="visible"
+            variants={slideIn}
+          >
+            <Box sx={{ textAlign: { xs: 'center', md: 'left' }, maxWidth: { xs: '100%', md: '70%' } }}>
+              <Typography
+                variant={isMobile ? "h3" : "h1"}
+                component="h1"
+                sx={{
+                  fontWeight: 800,
+                  mb: { xs: 2, md: 3 },
+                  color: 'white',
+                  letterSpacing: '-0.02em',
+                  lineHeight: 1.1,
+                  fontSize: { xs: '2.5rem', sm: '3rem', md: '4.5rem', lg: '5.5rem' },
+                  textShadow: '0 2px 4px rgba(0,0,0,0.1)',
+                }}
               >
-                <Box sx={{ mb: { xs: 3, md: 6 } }}>
-                  <Typography
-                    variant={isMobile ? "h3" : "h1"}
-                    component="h1"
-                    sx={{
-                      fontWeight: 800,
-                      mb: { xs: 2, md: 3 },
-                      color: 'white',
-                      letterSpacing: '-0.02em',
-                      lineHeight: 1.1,
-                      fontSize: { xs: '2.5rem', sm: '3rem', md: '4.5rem', lg: '5.5rem' },
-                      textShadow: '0 2px 4px rgba(0,0,0,0.1)',
-                    }}
-                  >
-                    Lonavala's Premier
-                    <br />
-                    Sports Destination
-                  </Typography>
-                  <Typography
-                    variant="h5"
-                    sx={{ 
-                      mb: { xs: 2, md: 4 }, 
-                      color: 'rgba(255,255,255,0.95)',
-                      maxWidth: '90%',
-                      lineHeight: 1.6,
-                      fontSize: { xs: '1rem', sm: '1.25rem', md: '1.5rem' },
-                      textShadow: '0 1px 2px rgba(0,0,0,0.1)',
-                    }}
-                  >
-                    Experience the thrill of sports amidst scenic mountain views.
-                  </Typography>
-                </Box>
-                <Button 
-                  variant="contained" 
-                  size="large"
-                  onClick={handleOpenSportModal}
-                  sx={{ 
-                    py: { xs: 1.5, md: 2 }, 
-                    px: { xs: 3, md: 4 },
-                    borderRadius: 3,
-                    bgcolor: 'primary.main',
-                    color: 'white',
-                    fontWeight: 700,
-                    fontSize: { xs: '1rem', md: '1.25rem' },
-                    textTransform: 'none',
-                    '&:hover': {
-                      bgcolor: 'primary.dark',
-                      transform: 'translateY(-2px)',
-                      boxShadow: '0 12px 20px rgba(0,0,0,0.2)',
-                    },
-                    transition: 'all 0.3s ease-in-out',
-                  }}
-                >
-                  Book
-                </Button>
-              </motion.div>
+                Lonavala's Premier
+                <br />
+                Sports Destination
+              </Typography>
+              <Typography
+                variant="h5"
+                sx={{ 
+                  mb: { xs: 3, md: 4 }, 
+                  color: 'rgba(255,255,255,0.95)',
+                  maxWidth: { xs: '100%', md: '90%' },
+                  lineHeight: 1.6,
+                  fontSize: { xs: '1rem', sm: '1.25rem', md: '1.5rem' },
+                  textShadow: '0 1px 2px rgba(0,0,0,0.1)',
+                }}
+              >
+                Experience the thrill of sports amidst scenic mountain views.
+              </Typography>
+              <Button 
+                variant="contained" 
+                size="large"
+                onClick={handleOpenSportModal}
+                sx={{ 
+                  py: { xs: 1.5, md: 2 }, 
+                  px: { xs: 3, md: 4 },
+                  borderRadius: 3,
+                  bgcolor: 'primary.main',
+                  color: 'white',
+                  fontWeight: 700,
+                  fontSize: { xs: '1rem', md: '1.25rem' },
+                  textTransform: 'none',
+                  '&:hover': {
+                    bgcolor: 'primary.dark',
+                    transform: 'translateY(-2px)',
+                    boxShadow: '0 12px 20px rgba(0,0,0,0.2)',
+                  },
+                  transition: 'all 0.3s ease-in-out',
+                }}
+              >
+                Book
+              </Button>
             </Box>
-          </Box>
+          </motion.div>
         </Container>
       </Box>
 
