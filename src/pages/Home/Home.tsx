@@ -180,7 +180,7 @@ const Home = () => {
           borderBottom: '1px solid',
           borderColor: 'divider',
         }}>
-          <Typography variant="h6" component="h2" fontWeight={600}>
+          <Typography variant="h6" component="div" fontWeight={600}>
             Select Sport
           </Typography>
           <IconButton onClick={handleCloseSportModal}>
@@ -228,8 +228,8 @@ const Home = () => {
       {/* Sport Cards */}
       <Box sx={{ py: { xs: 8, md: 12 }, bgcolor: 'background.default' }}>
         <Container maxWidth="lg">
-          <MuiGrid container component="div" spacing={4} justifyContent="center">
-            <MuiGrid item component="div" xs={12} md={6}>
+          <MuiGrid container spacing={4} justifyContent="center">
+            <MuiGrid sx={{ gridColumn: { xs: 'span 12', md: 'span 6' } }}>
               <Card 
                 sx={{ 
                   height: '100%',
@@ -296,7 +296,7 @@ const Home = () => {
               </Card>
             </MuiGrid>
 
-            <MuiGrid item component="div" xs={12} md={6}>
+            <MuiGrid sx={{ gridColumn: { xs: 'span 12', md: 'span 6' } }}>
               <Card 
                 sx={{ 
                   height: '100%',

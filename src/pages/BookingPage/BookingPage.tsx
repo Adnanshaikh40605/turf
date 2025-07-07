@@ -134,7 +134,6 @@ const BookingPage = () => {
                   label="Select Date"
                   value={selectedDate}
                   onChange={(newDate) => setSelectedDate(newDate)}
-                  renderInput={(params) => <TextField {...params} />}
                   slotProps={{
                     textField: {
                       fullWidth: isMobile,
