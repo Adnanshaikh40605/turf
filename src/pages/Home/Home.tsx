@@ -58,7 +58,7 @@ const Home = () => {
       <Box 
         sx={{ 
           position: 'relative',
-          minHeight: '100vh',
+          minHeight: { xs: '80vh', md: '100vh' },
           width: '100%',
           display: 'flex',
           alignItems: 'center',
@@ -91,23 +91,23 @@ const Home = () => {
       >
         <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 2 }}>
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <Box sx={{ width: { xs: '100%', md: '66.666667%', lg: '58.333333%' }, p: 2 }}>
+            <Box sx={{ width: { xs: '100%', md: '66.666667%', lg: '58.333333%' }, p: { xs: 1, md: 2 } }}>
               <motion.div
                 initial="hidden"
                 animate="visible"
                 variants={slideIn}
               >
-                <Box sx={{ mb: 6 }}>
+                <Box sx={{ mb: { xs: 3, md: 6 } }}>
                   <Typography
-                    variant={isMobile ? "h2" : "h1"}
+                    variant={isMobile ? "h3" : "h1"}
                     component="h1"
                     sx={{
                       fontWeight: 800,
-                      mb: 3,
+                      mb: { xs: 2, md: 3 },
                       color: 'white',
                       letterSpacing: '-0.02em',
                       lineHeight: 1.1,
-                      fontSize: { xs: '3.5rem', md: '4.5rem', lg: '5.5rem' },
+                      fontSize: { xs: '2.5rem', sm: '3rem', md: '4.5rem', lg: '5.5rem' },
                       textShadow: '0 2px 4px rgba(0,0,0,0.1)',
                     }}
                   >
@@ -118,11 +118,11 @@ const Home = () => {
                   <Typography
                     variant="h5"
                     sx={{ 
-                      mb: 4, 
+                      mb: { xs: 2, md: 4 }, 
                       color: 'rgba(255,255,255,0.95)',
                       maxWidth: '90%',
                       lineHeight: 1.6,
-                      fontSize: { xs: '1.25rem', md: '1.5rem' },
+                      fontSize: { xs: '1rem', sm: '1.25rem', md: '1.5rem' },
                       textShadow: '0 1px 2px rgba(0,0,0,0.1)',
                     }}
                   >
@@ -134,13 +134,13 @@ const Home = () => {
                   size="large"
                   onClick={handleOpenSportModal}
                   sx={{ 
-                    py: 2, 
-                    px: 4,
+                    py: { xs: 1.5, md: 2 }, 
+                    px: { xs: 3, md: 4 },
                     borderRadius: 3,
                     bgcolor: 'primary.main',
                     color: 'white',
                     fontWeight: 700,
-                    fontSize: '1.25rem',
+                    fontSize: { xs: '1rem', md: '1.25rem' },
                     textTransform: 'none',
                     '&:hover': {
                       bgcolor: 'primary.dark',
@@ -173,7 +173,7 @@ const Home = () => {
         }}
       >
         <DialogTitle sx={{ 
-          p: 3,
+          p: { xs: 2, md: 3 },
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
@@ -187,15 +187,15 @@ const Home = () => {
             <CloseIcon />
           </IconButton>
         </DialogTitle>
-        <DialogContent sx={{ p: 3 }}>
+        <DialogContent sx={{ p: { xs: 2, md: 3 } }}>
           <Stack spacing={2}>
             <Button
               variant="outlined"
               size="large"
               startIcon={<CricketIcon />}
               onClick={() => handleSportSelect('cricket')}
-              sx={{
-                py: 2,
+              sx={{ 
+                py: { xs: 1.5, md: 2 },
                 justifyContent: 'flex-start',
                 borderWidth: 2,
                 '&:hover': {
@@ -211,7 +211,7 @@ const Home = () => {
               startIcon={<PickleballIcon />}
               onClick={() => handleSportSelect('pickleball')}
               sx={{
-                py: 2,
+                py: { xs: 1.5, md: 2 },
                 justifyContent: 'flex-start',
                 borderWidth: 2,
                 '&:hover': {
@@ -226,9 +226,9 @@ const Home = () => {
       </Dialog>
 
       {/* Sport Cards */}
-      <Box sx={{ py: { xs: 8, md: 12 }, bgcolor: 'background.default' }}>
+      <Box sx={{ py: { xs: 4, md: 8 }, bgcolor: 'background.default' }}>
         <Container maxWidth="lg">
-          <MuiGrid container spacing={4} justifyContent="center">
+          <MuiGrid container spacing={{ xs: 2, md: 4 }} justifyContent="center">
             <MuiGrid sx={{ gridColumn: { xs: 'span 12', md: 'span 6' } }}>
               <Card 
                 sx={{ 
@@ -246,14 +246,14 @@ const Home = () => {
                   },
                 }}
               >
-                <CardContent sx={{ p: 4 }}>
-                  <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
-                    <CricketIcon color="primary" sx={{ fontSize: 40, mr: 2 }} />
-                    <Typography variant="h4" component="h3" fontWeight={700}>
+                <CardContent sx={{ p: { xs: 2, md: 4 } }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', mb: { xs: 2, md: 3 } }}>
+                    <CricketIcon color="primary" sx={{ fontSize: { xs: 32, md: 40 }, mr: 2 }} />
+                    <Typography variant={isMobile ? "h5" : "h4"} component="h3" fontWeight={700}>
                       Cricket
                     </Typography>
                   </Box>
-                  <Typography variant="body1" color="text.secondary" paragraph sx={{ mb: 4 }}>
+                  <Typography variant="body1" color="text.secondary" paragraph sx={{ mb: { xs: 2, md: 4 } }}>
                     Experience world-class cricket facilities with professional-grade pitches and practice nets.
                   </Typography>
                   <Box sx={{ 
@@ -263,7 +263,7 @@ const Home = () => {
                     mt: 'auto'
                   }}>
                     <Typography 
-                      variant="h4" 
+                      variant={isMobile ? "h5" : "h4"} 
                       fontWeight={700} 
                       sx={{
                         background: 'linear-gradient(45deg, #673ab7 30%, #9c27b0 90%)',
@@ -278,8 +278,8 @@ const Home = () => {
                       size="large"
                       onClick={() => handleSportSelect('cricket')}
                       sx={{ 
-                        py: 1.5,
-                        px: 4,
+                        py: { xs: 1, md: 1.5 }, 
+                        px: { xs: 2, md: 4 },
                         borderRadius: 3,
                         background: 'linear-gradient(45deg, #673ab7 30%, #9c27b0 90%)',
                         boxShadow: '0 8px 16px rgba(103, 58, 183, 0.3)',
@@ -313,14 +313,14 @@ const Home = () => {
                   },
                 }}
               >
-                <CardContent sx={{ p: 4 }}>
-                  <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
-                    <PickleballIcon color="primary" sx={{ fontSize: 40, mr: 2 }} />
-                    <Typography variant="h4" component="h3" fontWeight={700}>
+                <CardContent sx={{ p: { xs: 2, md: 4 } }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', mb: { xs: 2, md: 3 } }}>
+                    <PickleballIcon color="primary" sx={{ fontSize: { xs: 32, md: 40 }, mr: 2 }} />
+                    <Typography variant={isMobile ? "h5" : "h4"} component="h3" fontWeight={700}>
                       Pickleball
                     </Typography>
                   </Box>
-                  <Typography variant="body1" color="text.secondary" paragraph sx={{ mb: 4 }}>
+                  <Typography variant="body1" color="text.secondary" paragraph sx={{ mb: { xs: 2, md: 4 } }}>
                     Premium pickleball courts designed for both casual play and competitive matches.
                   </Typography>
                   <Box sx={{ 
@@ -330,7 +330,7 @@ const Home = () => {
                     mt: 'auto'
                   }}>
                     <Typography 
-                      variant="h4" 
+                      variant={isMobile ? "h5" : "h4"} 
                       fontWeight={700} 
                       sx={{
                         background: 'linear-gradient(45deg, #673ab7 30%, #9c27b0 90%)',
@@ -345,8 +345,8 @@ const Home = () => {
                       size="large"
                       onClick={() => handleSportSelect('pickleball')}
                       sx={{ 
-                        py: 1.5,
-                        px: 4,
+                        py: { xs: 1, md: 1.5 }, 
+                        px: { xs: 2, md: 4 },
                         borderRadius: 3,
                         background: 'linear-gradient(45deg, #673ab7 30%, #9c27b0 90%)',
                         boxShadow: '0 8px 16px rgba(103, 58, 183, 0.3)',
