@@ -21,7 +21,9 @@ import {
   Add as AddIcon,
   Check as CheckIcon,
   ArrowBack as ArrowBackIcon,
-  Info as InfoIcon
+  Info as InfoIcon,
+  LightMode as MorningIcon,
+  WbTwilight as EveningIcon
 } from '@mui/icons-material';
 import { useParams, useNavigate } from 'react-router-dom';
 import { format, addDays, isSameDay } from 'date-fns';
@@ -43,41 +45,48 @@ const BookingPage = () => {
   const dateArray = Array.from({ length: 7 }, (_, i) => addDays(today, i));
   
   // Time slots grouped by time of day
-  const midnightSlots = [
-    { time: "1:00 - 2:00", price: 1200 },
-    { time: "2:00 - 3:00", price: 1200 },
-    { time: "3:00 - 4:00", price: 1200 },
-  ];
-  
   const morningSlots = [
     { time: "4:00 - 5:00", price: 1200 },
     { time: "5:00 - 6:00", price: 1200 },
     { time: "6:00 - 7:00", price: 1200 },
     { time: "7:00 - 8:00", price: 1500 },
     { time: "8:00 - 9:00", price: 1500 },
+    { time: "9:00 - 10:00", price: 1500 },
+    { time: "10:00 - 11:00", price: 1500 },
+    { time: "11:00 - 12:00", price: 1500 },
   ];
   
   const afternoonSlots = [
-    { time: "12:00 - 1:00", price: 1500 },
-    { time: "1:00 - 2:00", price: 1500 },
-    { time: "2:00 - 3:00", price: 1500 },
-    { time: "3:00 - 4:00", price: 1500 },
+    { time: "12:00 - 13:00", price: 1500 },
+    { time: "13:00 - 14:00", price: 1500 },
+    { time: "14:00 - 15:00", price: 1500 },
+    { time: "15:00 - 16:00", price: 1500 },
   ];
   
   const eveningSlots = [
-    { time: "4:00 - 5:00", price: 2000 },
-    { time: "5:00 - 6:00", price: 2000 },
-    { time: "6:00 - 7:00", price: 2000 },
-    { time: "7:00 - 8:00", price: 2000 },
-    { time: "8:00 - 9:00", price: 2000 },
+    { time: "16:00 - 17:00", price: 2000 },
+    { time: "17:00 - 18:00", price: 2000 },
+    { time: "18:00 - 19:00", price: 2000 },
+    { time: "19:00 - 20:00", price: 2000 },
+    { time: "20:00 - 21:00", price: 2000 },
+    { time: "21:00 - 22:00", price: 2000 },
+    { time: "22:00 - 23:00", price: 2000 },
+    { time: "23:00 - 00:00", price: 2000 },
+  ];
+  
+  const midnightSlots = [
+    { time: "00:00 - 01:00", price: 1200 },
+    { time: "01:00 - 02:00", price: 1200 },
+    { time: "02:00 - 03:00", price: 1200 },
+    { time: "03:00 - 04:00", price: 1200 },
   ];
   
   // Mock data for booked slots
   const bookedSlots = [
     { date: format(dateArray[0], 'yyyy-MM-dd'), time: "7:00 - 8:00" },
     { date: format(dateArray[0], 'yyyy-MM-dd'), time: "8:00 - 9:00" },
-    { date: format(dateArray[1], 'yyyy-MM-dd'), time: "2:00 - 3:00" },
-    { date: format(dateArray[2], 'yyyy-MM-dd'), time: "6:00 - 7:00" },
+    { date: format(dateArray[1], 'yyyy-MM-dd'), time: "14:00 - 15:00" },
+    { date: format(dateArray[2], 'yyyy-MM-dd'), time: "18:00 - 19:00" },
   ];
 
   // Calculate available slots
@@ -136,16 +145,22 @@ const BookingPage = () => {
   const calculateTotalPrice = () => {
     let total = 0;
     selectedSlots.forEach(slotId => {
-      const time = slotId.split('-')[2] + ' - ' + slotId.split('-')[3];
+      const timeParts = slotId.split('-');
+      const time = timeParts.slice(2).join('-');
       
       // Find the price for this time slot
-      const allSlots = [...midnightSlots, ...morningSlots, ...afternoonSlots, ...eveningSlots];
+      const allSlots = [...morningSlots, ...afternoonSlots, ...eveningSlots, ...midnightSlots];
       const slot = allSlots.find(s => s.time === time);
       if (slot) {
         total += slot.price;
       }
     });
     return total;
+  };
+
+  // Format time for display
+  const formatTimeDisplay = (time: string) => {
+    return time;
   };
 
   // Render time slot card
@@ -179,7 +194,7 @@ const BookingPage = () => {
         }}>
           <Box>
             <Typography variant="h6" fontWeight={500} sx={{ fontSize: { xs: '1rem', sm: '1.25rem' } }}>
-              {slot.time}
+              {formatTimeDisplay(slot.time)}
             </Typography>
           </Box>
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
@@ -402,21 +417,6 @@ const BookingPage = () => {
 
         {/* Time Slots */}
         <Box sx={{ mb: 4 }}>
-          {/* Midnight Slots */}
-          <Box sx={{ mb: 3 }}>
-            <Box sx={{ 
-              display: 'flex', 
-              alignItems: 'center', 
-              mb: 2 
-            }}>
-              <NightIcon sx={{ color: 'text.secondary', mr: 1 }} />
-              <Typography variant="h6" fontWeight={600} color="text.secondary">
-                Mid-Night Slots
-              </Typography>
-            </Box>
-            {midnightSlots.map(slot => renderTimeSlot(slot, 'midnight'))}
-          </Box>
-
           {/* Morning Slots */}
           <Box sx={{ mb: 3 }}>
             <Box sx={{ 
@@ -424,10 +424,8 @@ const BookingPage = () => {
               alignItems: 'center', 
               mb: 2 
             }}>
-              <Box component="span" role="img" aria-label="morning" sx={{ mr: 1 }}>
-                🌞
-              </Box>
-              <Typography variant="h6" fontWeight={600} color="warning.dark">
+              <MorningIcon sx={{ color: 'warning.main', mr: 1 }} />
+              <Typography variant="h6" fontWeight={600} color="warning.main">
                 Morning Slots
               </Typography>
             </Box>
@@ -441,8 +439,8 @@ const BookingPage = () => {
               alignItems: 'center', 
               mb: 2 
             }}>
-              <SunIcon sx={{ color: 'warning.main', mr: 1 }} />
-              <Typography variant="h6" fontWeight={600} color="warning.main">
+              <SunIcon sx={{ color: 'warning.dark', mr: 1 }} />
+              <Typography variant="h6" fontWeight={600} color="warning.dark">
                 Afternoon Slots
               </Typography>
             </Box>
@@ -456,14 +454,27 @@ const BookingPage = () => {
               alignItems: 'center', 
               mb: 2 
             }}>
-              <Box component="span" role="img" aria-label="evening" sx={{ mr: 1 }}>
-                🌆
-              </Box>
+              <EveningIcon sx={{ color: 'primary.main', mr: 1 }} />
               <Typography variant="h6" fontWeight={600} color="primary.main">
                 Evening Slots
               </Typography>
             </Box>
             {eveningSlots.map(slot => renderTimeSlot(slot, 'evening'))}
+          </Box>
+
+          {/* Midnight Slots */}
+          <Box sx={{ mb: 3 }}>
+            <Box sx={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              mb: 2 
+            }}>
+              <NightIcon sx={{ color: 'text.secondary', mr: 1 }} />
+              <Typography variant="h6" fontWeight={600} color="text.secondary">
+                Mid-Night Slots
+              </Typography>
+            </Box>
+            {midnightSlots.map(slot => renderTimeSlot(slot, 'midnight'))}
           </Box>
         </Box>
 
